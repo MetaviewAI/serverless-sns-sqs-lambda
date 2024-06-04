@@ -207,6 +207,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      *  event portion of the serverless function config
      */
     ServerlessSnsSqsLambda.prototype.addSnsSqsResources = function (template, funcName, stage, snsSqsConfig) {
+        var _this = this;
         var config = this.validateConfig(funcName, stage, snsSqsConfig);
         [
             this.addEventSourceMapping,
@@ -216,7 +217,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             this.addTopicSubscription,
             this.addLambdaSqsPermissions
         ].reduce(function (template, func) {
-            func(template, config);
+            func.call(_this, template, config);
             return template;
         }, template);
     };

@@ -274,7 +274,7 @@ export default class ServerlessSnsSqsLambda {
       this.addTopicSubscription,
       this.addLambdaSqsPermissions
     ].reduce((template, func) => {
-      func(template, config);
+      func.call(this, template, config);
       return template;
     }, template);
   }
