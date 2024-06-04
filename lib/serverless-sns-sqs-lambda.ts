@@ -407,6 +407,7 @@ Usage
     const enabledWithDefault = enabled !== undefined ? enabled : true;
     addResource(template, `${funcName}EventSourceMappingSQS${name}Queue`, {
       Type: "AWS::Lambda::EventSourceMapping",
+      DependsOn: cfFuncName,
       Properties: {
         BatchSize: batchSize,
         MaximumBatchingWindowInSeconds:
