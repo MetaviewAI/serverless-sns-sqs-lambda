@@ -52,7 +52,7 @@ var pascalCaseAllKeys = function (jsonObject) {
 };
 var validateQueueName = function (queueName) {
     if (queueName.length > 80) {
-        throw new Error("Generated queue name [" + queueName + "] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option.");
+        throw new Error("Generated queue name [".concat(queueName, "] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option."));
     }
     return queueName;
 };
@@ -72,7 +72,7 @@ var isKmsArn = function (possibleArn) {
  */
 var addResource = function (template, logicalId, resourceDefinition) {
     if (logicalId in template.Resources) {
-        throw new Error("Generated logical ID [" + logicalId + "] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property.");
+        throw new Error("Generated logical ID [".concat(logicalId, "] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property."));
     }
     template.Resources[logicalId] = resourceDefinition;
 };
@@ -190,9 +190,9 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                 func.events.forEach(function (event) {
                     if (event.snsSqs) {
                         if (_this.options.verbose) {
-                            console.info("Adding snsSqs event handler [" + JSON.stringify(event.snsSqs) + "]");
+                            console.info("Adding snsSqs event handler [".concat(JSON.stringify(event.snsSqs), "]"));
                         }
-                        _this.addSnsSqsResources(template, funcKey, _this.stage, event.snsSqs);
+                        _this.addSnsSqsResources(template, func, funcKey, _this.stage, event.snsSqs);
                     }
                 });
             }
@@ -206,7 +206,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {object} snsSqsConfig the configuration values from the snsSqs
      *  event portion of the serverless function config
      */
-    ServerlessSnsSqsLambda.prototype.addSnsSqsResources = function (template, funcName, stage, snsSqsConfig) {
+    ServerlessSnsSqsLambda.prototype.addSnsSqsResources = function (template, func, funcName, stage, snsSqsConfig) {
         var config = this.validateConfig(funcName, stage, snsSqsConfig);
         [
             this.addEventSourceMapping,
@@ -215,8 +215,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             this.addEventQueuePolicy,
             this.addTopicSubscription,
             this.addLambdaSqsPermissions
-        ].reduce(function (template, func) {
-            func(template, config);
+        ].reduce(function (template, f) {
+            f(template, func, config);
             return template;
         }, template);
     };
@@ -233,10 +233,10 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
     ServerlessSnsSqsLambda.prototype.validateConfig = function (funcName, stage, config) {
         var _a, _b, _c, _d;
         if (!config.topicArn || !config.name) {
-            throw new Error("Error:\nWhen creating an snsSqs handler, you must define the name and topicArn.\nIn function [" + funcName + "]:\n- name was [" + config.name + "]\n- topicArn was [" + config.topicArn + "].\n\nUsage\n-----\n\n  functions:\n    processEvent:\n      handler: handler.handler\n      events:\n        - snsSqs:\n            name: Event                                      # required\n            topicArn: !Ref TopicArn                          # required\n            prefix: some-prefix                              # optional - default is `${this.serviceName}-${stage}-${funcNamePascalCase}`\n            maxRetryCount: 2                                 # optional - default is 5\n            batchSize: 1                                     # optional - default is 10\n            batchWindow: 10                                  # optional - default is 0 (no batch window)\n            kmsMasterKeyId: alias/aws/sqs                    # optional - default is none (no encryption)\n            kmsDataKeyReusePeriodSeconds: 600                # optional - AWS default is 300 seconds\n            deadLetterMessageRetentionPeriodSeconds: 1209600 # optional - AWS default is 345600 secs (4 days)\n            deadLetterQueueEnabled: true                     # optional - default is enabled\n            enabled: true                                    # optional - AWS default is true\n            fifo: false                                      # optional - AWS default is false\n            visibilityTimeout: 30                            # optional - AWS default is 30 seconds\n            rawMessageDelivery: false                        # optional - default is false\n            filterPolicy:\n              pet:\n                - dog\n                - cat\n\n            # Overrides for generated CloudFormation templates\n            # Mirrors the CloudFormation docs but uses camel case instead of title case\n            #\n            #\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html\n            mainQueueOverride:\n              maximumMessageSize: 1024\n              ...\n            deadLetterQueueOverride:\n              maximumMessageSize: 1024\n              ...\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html\n            eventSourceMappingOverride:\n              bisectBatchOnFunctionError: true\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sns-subscription.html\n            subscriptionOverride:\n              rawMessageDelivery: true\n\n");
+            throw new Error("Error:\nWhen creating an snsSqs handler, you must define the name and topicArn.\nIn function [".concat(funcName, "]:\n- name was [").concat(config.name, "]\n- topicArn was [").concat(config.topicArn, "].\n\nUsage\n-----\n\n  functions:\n    processEvent:\n      handler: handler.handler\n      events:\n        - snsSqs:\n            name: Event                                      # required\n            topicArn: !Ref TopicArn                          # required\n            prefix: some-prefix                              # optional - default is `${this.serviceName}-${stage}-${funcNamePascalCase}`\n            maxRetryCount: 2                                 # optional - default is 5\n            batchSize: 1                                     # optional - default is 10\n            batchWindow: 10                                  # optional - default is 0 (no batch window)\n            kmsMasterKeyId: alias/aws/sqs                    # optional - default is none (no encryption)\n            kmsDataKeyReusePeriodSeconds: 600                # optional - AWS default is 300 seconds\n            deadLetterMessageRetentionPeriodSeconds: 1209600 # optional - AWS default is 345600 secs (4 days)\n            deadLetterQueueEnabled: true                     # optional - default is enabled\n            enabled: true                                    # optional - AWS default is true\n            fifo: false                                      # optional - AWS default is false\n            visibilityTimeout: 30                            # optional - AWS default is 30 seconds\n            rawMessageDelivery: false                        # optional - default is false\n            filterPolicy:\n              pet:\n                - dog\n                - cat\n\n            # Overrides for generated CloudFormation templates\n            # Mirrors the CloudFormation docs but uses camel case instead of title case\n            #\n            #\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html\n            mainQueueOverride:\n              maximumMessageSize: 1024\n              ...\n            deadLetterQueueOverride:\n              maximumMessageSize: 1024\n              ...\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html\n            eventSourceMappingOverride:\n              bisectBatchOnFunctionError: true\n            # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sns-subscription.html\n            subscriptionOverride:\n              rawMessageDelivery: true\n\n"));
         }
         var funcNamePascalCase = this.serverless.providers.aws.naming.getNormalizedFunctionName(funcName);
-        return __assign(__assign({}, config), { name: config.name, funcName: funcNamePascalCase, prefix: config.prefix || this.serviceName + "-" + stage + "-" + funcNamePascalCase, batchSize: parseIntOr(config.batchSize, 10), maxRetryCount: parseIntOr(config.maxRetryCount, 5), kmsMasterKeyId: config.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds: config.kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds: config.deadLetterMessageRetentionPeriodSeconds, deadLetterQueueEnabled: config.deadLetterQueueEnabled !== undefined
+        return __assign(__assign({}, config), { name: config.name, funcName: funcNamePascalCase, prefix: config.prefix || "".concat(this.serviceName, "-").concat(stage, "-").concat(funcNamePascalCase), batchSize: parseIntOr(config.batchSize, 10), maxRetryCount: parseIntOr(config.maxRetryCount, 5), kmsMasterKeyId: config.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds: config.kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds: config.deadLetterMessageRetentionPeriodSeconds, deadLetterQueueEnabled: config.deadLetterQueueEnabled !== undefined
                 ? config.deadLetterQueueEnabled
                 : true, enabled: config.enabled, fifo: config.fifo !== undefined ? config.fifo : false, visibilityTimeout: config.visibilityTimeout, rawMessageDelivery: config.rawMessageDelivery !== undefined
                 ? config.rawMessageDelivery
@@ -250,14 +250,14 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{funcName, name, prefix, batchSize, enabled}} config including name of the queue
      *  and the resource prefix
      */
-    ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
         var enabledWithDefault = enabled !== undefined ? enabled : true;
-        addResource(template, funcName + "EventSourceMappingSQS" + name + "Queue", {
+        addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name, "Queue"), {
             Type: "AWS::Lambda::EventSourceMapping",
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": [name + "Queue", "Arn"] }, FunctionName: { "Fn::GetAtt": [funcName + "LambdaFunction", "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: func.provisionedConcurrency ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") } : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
     };
     /**
@@ -268,13 +268,13 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, kmsMasterKeyId, kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds }} config including name of the queue
      *  and the resource prefix
      */
-    ServerlessSnsSqsLambda.prototype.addEventDeadLetterQueue = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventDeadLetterQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds = _a.deadLetterMessageRetentionPeriodSeconds, deadLetterQueueOverride = _a.deadLetterQueueOverride, deadLetterQueueEnabled = _a.deadLetterQueueEnabled, omitPhysicalId = _a.omitPhysicalId;
         if (!deadLetterQueueEnabled) {
             return;
         }
-        var candidateQueueName = "" + prefix + name + "DeadLetterQueue" + (fifo ? ".fifo" : "");
-        addResource(template, name + "DeadLetterQueue", {
+        var candidateQueueName = "".concat(prefix).concat(name, "DeadLetterQueue").concat(fifo ? ".fifo" : "");
+        addResource(template, "".concat(name, "DeadLetterQueue"), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -301,10 +301,10 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, maxRetryCount, kmsMasterKeyId, kmsDataKeyReusePeriodSeconds, visibilityTimeout}} config including name of the queue,
      *  the resource prefix and the max retry count for message handler failures.
      */
-    ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, maxRetryCount = _a.maxRetryCount, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, visibilityTimeout = _a.visibilityTimeout, mainQueueOverride = _a.mainQueueOverride, omitPhysicalId = _a.omitPhysicalId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
-        var candidateQueueName = "" + prefix + name + "Queue" + (fifo ? ".fifo" : "");
-        addResource(template, name + "Queue", {
+        var candidateQueueName = "".concat(prefix).concat(name, "Queue").concat(fifo ? ".fifo" : "");
+        addResource(template, "".concat(name, "Queue"), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -312,7 +312,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                 ? {
                     RedrivePolicy: {
                         deadLetterTargetArn: {
-                            "Fn::GetAtt": [name + "DeadLetterQueue", "Arn"]
+                            "Fn::GetAtt": ["".concat(name, "DeadLetterQueue"), "Arn"]
                         },
                         maxReceiveCount: maxRetryCount
                     }
@@ -339,26 +339,26 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, topicArn}} config including name of the queue, the
      *  resource prefix and the arn of the topic
      */
-    ServerlessSnsSqsLambda.prototype.addEventQueuePolicy = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventQueuePolicy = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, topicArn = _a.topicArn;
-        addResource(template, name + "QueuePolicy", {
+        addResource(template, "".concat(name, "QueuePolicy"), {
             Type: "AWS::SQS::QueuePolicy",
             Properties: {
                 PolicyDocument: {
                     Version: "2012-10-17",
-                    Id: "" + prefix + name + "Queue",
+                    Id: "".concat(prefix).concat(name, "Queue"),
                     Statement: [
                         {
-                            Sid: "" + prefix + name + "Sid",
+                            Sid: "".concat(prefix).concat(name, "Sid"),
                             Effect: "Allow",
                             Principal: { Service: "sns.amazonaws.com" },
                             Action: "SQS:SendMessage",
-                            Resource: { "Fn::GetAtt": [name + "Queue", "Arn"] },
+                            Resource: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] },
                             Condition: { ArnEquals: { "aws:SourceArn": [topicArn] } }
                         }
                     ]
                 },
-                Queues: [{ Ref: name + "Queue" }]
+                Queues: [{ Ref: "".concat(name, "Queue") }]
             }
         });
     };
@@ -369,11 +369,11 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, topicArn, filterPolicy}} config including name of the queue,
      *  the arn of the topic and the filter policy for the subscription
      */
-    ServerlessSnsSqsLambda.prototype.addTopicSubscription = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addTopicSubscription = function (template, func, _a) {
         var name = _a.name, topicArn = _a.topicArn, filterPolicy = _a.filterPolicy, rawMessageDelivery = _a.rawMessageDelivery, subscriptionOverride = _a.subscriptionOverride;
-        addResource(template, "Subscribe" + name + "Topic", {
+        addResource(template, "Subscribe".concat(name, "Topic"), {
             Type: "AWS::SNS::Subscription",
-            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": [name + "Queue", "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
+            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
                 ? {
                     RawMessageDelivery: rawMessageDelivery
                 }
@@ -386,7 +386,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {object} template the template which gets mutated
      * @param {{name, prefix}} config the name of the queue the lambda is subscribed to
      */
-    ServerlessSnsSqsLambda.prototype.addLambdaSqsPermissions = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addLambdaSqsPermissions = function (template, func, _a) {
         var name = _a.name, kmsMasterKeyId = _a.kmsMasterKeyId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
         if (template.Resources.IamRoleLambdaExecution === undefined) {
             // The user has set their own custom role ARN so the Serverless generated role is not generated
@@ -394,9 +394,9 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             // this the relevant policy to allow the lambda to access the queue.
             return;
         }
-        var queues = [{ "Fn::GetAtt": [name + "Queue", "Arn"] }];
+        var queues = [{ "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }];
         if (deadLetterQueueEnabled) {
-            queues.push({ "Fn::GetAtt": [name + "DeadLetterQueue", "Arn"] });
+            queues.push({ "Fn::GetAtt": ["".concat(name, "DeadLetterQueue"), "Arn"] });
         }
         template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push({
             Effect: "Allow",
@@ -416,7 +416,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             // transform it to an ARN to make the policy valid
             typeof kmsMasterKeyId === "object" || isKmsArn(kmsMasterKeyId)
                 ? kmsMasterKeyId
-                : "arn:aws:kms:::key/" + kmsMasterKeyId;
+                : "arn:aws:kms:::key/".concat(kmsMasterKeyId);
             template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push({
                 Effect: "Allow",
                 Action: ["kms:Decrypt"],

@@ -25,7 +25,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -57,7 +57,7 @@ var serverless_sns_sqs_lambda_1 = __importDefault(require("./serverless-sns-sqs-
 // See https://github.com/serverless/test/blob/71746cd0e0c897de50e19bc96a3968e5f26bee4f/docs/run-serverless.md for more info on run-serverless
 var run_serverless_1 = __importDefault(require("@serverless/test/run-serverless"));
 var path_1 = require("path");
-var serverlessPath = path_1.join(__dirname, "../node_modules/serverless");
+var serverlessPath = (0, path_1.join)(__dirname, "../node_modules/serverless");
 var slsOpt = {
     region: "ap-southeast-2"
 };
@@ -140,7 +140,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     case 0:
                         expect.assertions(1);
                         return [4 /*yield*/, expect(function () {
-                                return run_serverless_1.default(serverlessPath, {
+                                return (0, run_serverless_1.default)(serverlessPath, {
                                     command: "package",
                                     config: __assign(__assign({}, baseConfig), { functions: {
                                             processEvent: {
@@ -169,7 +169,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     case 0:
                         expect.assertions(1);
                         return [4 /*yield*/, expect(function () {
-                                return run_serverless_1.default(serverlessPath, {
+                                return (0, run_serverless_1.default)(serverlessPath, {
                                     command: "package",
                                     config: __assign(__assign({}, baseConfig), { functions: {
                                             processEvent: {
@@ -198,7 +198,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     case 0:
                         expect.assertions(1);
                         return [4 /*yield*/, expect(function () {
-                                return run_serverless_1.default(serverlessPath, {
+                                return (0, run_serverless_1.default)(serverlessPath, {
                                     command: "package",
                                     config: __assign(__assign({}, baseConfig), { functions: {
                                             processEvent: {
@@ -227,7 +227,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -265,7 +265,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -315,7 +315,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -354,7 +354,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -394,7 +394,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -450,7 +450,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { functions: (_a = {},
                                         _a["test-function"] = {
@@ -489,7 +489,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, run_serverless_1.default(serverlessPath, {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
                                 command: "package",
                                 config: __assign(__assign({}, baseConfig), { provider: __assign(__assign({}, baseConfig.provider), { iam: {
                                             role: "arn:aws:iam::123456789012:role/execution-role",
