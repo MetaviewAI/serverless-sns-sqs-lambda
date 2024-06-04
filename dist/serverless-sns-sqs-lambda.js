@@ -252,13 +252,12 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      */
     ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
-        var functionArn = func.provisionedConcurrency ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") } : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] };
         var enabledWithDefault = enabled !== undefined ? enabled : true;
         addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name, "Queue"), {
             Type: "AWS::Lambda::EventSourceMapping",
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: functionArn, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: func.provisionedConcurrency ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") } : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
     };
     /**

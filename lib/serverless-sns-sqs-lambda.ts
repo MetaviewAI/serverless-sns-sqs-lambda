@@ -397,7 +397,6 @@ Usage
       eventSourceMappingOverride
     }: Config
   ) {
-    const functionArn = func.provisionedConcurrency ? { Ref: `${funcName}ProvConcLambdaAlias` } : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] };
     const enabledWithDefault = enabled !== undefined ? enabled : true;
     addResource(template, `${funcName}EventSourceMappingSQS${name}Queue`, {
       Type: "AWS::Lambda::EventSourceMapping",
@@ -408,7 +407,7 @@ Usage
             ? maximumBatchingWindowInSeconds
             : 0,
         EventSourceArn: { "Fn::GetAtt": [`${name}Queue`, "Arn"] },
-        FunctionName: functionArn,
+        FunctionName: func.provisionedConcurrency ? { Ref: `${funcName}ProvConcLambdaAlias` } : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] },
         Enabled: enabledWithDefault ? "True" : "False",
         ...pascalCaseAllKeys(eventSourceMappingOverride)
       }
