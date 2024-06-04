@@ -397,17 +397,9 @@ Usage
       eventSourceMappingOverride
     }: Config
   ) {
-    let cfFuncName = funcName + "LambdaFunction";
-    console.info(`Function ${funcName} has provisionedConcurrency: ${func.provisionedConcurrency}`)
-    if (func.provisionedConcurrency) {
-      // If provisioned concurrency is enabled, we need to add the event source to the alias.
-      // The 'ProvConcLambdaAlias' comes from https://github.com/serverless/serverless/blob/0c9b13e65f7c602a6efb8415475496b32c1603df/lib/plugins/aws/lib/naming.js#L196
-      cfFuncName += "ProvConcLambdaAlias";
-    }
     const enabledWithDefault = enabled !== undefined ? enabled : true;
     addResource(template, `${funcName}EventSourceMappingSQS${name}Queue`, {
       Type: "AWS::Lambda::EventSourceMapping",
-      DependsOn: cfFuncName,
       Properties: {
         BatchSize: batchSize,
         MaximumBatchingWindowInSeconds:
@@ -415,7 +407,7 @@ Usage
             ? maximumBatchingWindowInSeconds
             : 0,
         EventSourceArn: { "Fn::GetAtt": [`${name}Queue`, "Arn"] },
-        FunctionName: { "Fn::GetAtt": [`${cfFuncName}`, "Arn"] },
+        FunctionName: { "Fn::GetAtt": [`${funcName}${func.provisionedConcurrency ? 'ProvConcLambdaAlias' : 'LambdaFunction'}`, "Arn"] },
         Enabled: enabledWithDefault ? "True" : "False",
         ...pascalCaseAllKeys(eventSourceMappingOverride)
       }

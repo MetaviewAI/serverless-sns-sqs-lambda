@@ -252,20 +252,12 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      */
     ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
-        var cfFuncName = funcName + "LambdaFunction";
-        console.info("Function ".concat(funcName, " has provisionedConcurrency: ").concat(func.provisionedConcurrency));
-        if (func.provisionedConcurrency) {
-            // If provisioned concurrency is enabled, we need to add the event source to the alias.
-            // The 'ProvConcLambdaAlias' comes from https://github.com/serverless/serverless/blob/0c9b13e65f7c602a6efb8415475496b32c1603df/lib/plugins/aws/lib/naming.js#L196
-            cfFuncName += "ProvConcLambdaAlias";
-        }
         var enabledWithDefault = enabled !== undefined ? enabled : true;
         addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name, "Queue"), {
             Type: "AWS::Lambda::EventSourceMapping",
-            DependsOn: cfFuncName,
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: { "Fn::GetAtt": ["".concat(cfFuncName), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: { "Fn::GetAtt": ["".concat(funcName).concat(func.provisionedConcurrency ? 'ProvConcLambdaAlias' : 'LambdaFunction'), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
     };
     /**
