@@ -397,8 +397,10 @@ Usage
   ) {
     const func = this.serverless.service.functions[funcName];
     let cfFuncName = funcName + "LambdaFunction";
-    if (func.provisionedConcurrency && func.provisionedConcurrency > 0) {
+    console.info(`Function ${funcName} has provisionedConcurrency: ${func.provisionedConcurrency}`)
+    if (func.provisionedConcurrency) {
       // If provisioned concurrency is enabled, we need to add the event source to the alias.
+      // The 'ProvConcLambdaAlias' comes from https://github.com/serverless/serverless/blob/0c9b13e65f7c602a6efb8415475496b32c1603df/lib/plugins/aws/lib/naming.js#L196
       cfFuncName += "ProvConcLambdaAlias";
     }
     const enabledWithDefault = enabled !== undefined ? enabled : true;
