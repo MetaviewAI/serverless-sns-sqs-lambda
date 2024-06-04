@@ -192,7 +192,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                         if (_this.options.verbose) {
                             console.info("Adding snsSqs event handler [".concat(JSON.stringify(event.snsSqs), "]"));
                         }
-                        _this.addSnsSqsResources(template, funcKey, _this.stage, event.snsSqs);
+                        _this.addSnsSqsResources(template, func, funcKey, _this.stage, event.snsSqs);
                     }
                 });
             }
@@ -206,8 +206,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {object} snsSqsConfig the configuration values from the snsSqs
      *  event portion of the serverless function config
      */
-    ServerlessSnsSqsLambda.prototype.addSnsSqsResources = function (template, funcName, stage, snsSqsConfig) {
-        var _this = this;
+    ServerlessSnsSqsLambda.prototype.addSnsSqsResources = function (template, func, funcName, stage, snsSqsConfig) {
         var config = this.validateConfig(funcName, stage, snsSqsConfig);
         [
             this.addEventSourceMapping,
@@ -216,8 +215,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             this.addEventQueuePolicy,
             this.addTopicSubscription,
             this.addLambdaSqsPermissions
-        ].reduce(function (template, func) {
-            func.call(_this, template, config);
+        ].reduce(function (template, f) {
+            f(template, func, config);
             return template;
         }, template);
     };
@@ -251,9 +250,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{funcName, name, prefix, batchSize, enabled}} config including name of the queue
      *  and the resource prefix
      */
-    ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
-        var func = this.serverless.service.functions[funcName];
         var cfFuncName = funcName + "LambdaFunction";
         console.info("Function ".concat(funcName, " has provisionedConcurrency: ").concat(func.provisionedConcurrency));
         if (func.provisionedConcurrency) {
@@ -277,7 +275,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, kmsMasterKeyId, kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds }} config including name of the queue
      *  and the resource prefix
      */
-    ServerlessSnsSqsLambda.prototype.addEventDeadLetterQueue = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventDeadLetterQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, deadLetterMessageRetentionPeriodSeconds = _a.deadLetterMessageRetentionPeriodSeconds, deadLetterQueueOverride = _a.deadLetterQueueOverride, deadLetterQueueEnabled = _a.deadLetterQueueEnabled, omitPhysicalId = _a.omitPhysicalId;
         if (!deadLetterQueueEnabled) {
             return;
@@ -310,7 +308,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, maxRetryCount, kmsMasterKeyId, kmsDataKeyReusePeriodSeconds, visibilityTimeout}} config including name of the queue,
      *  the resource prefix and the max retry count for message handler failures.
      */
-    ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, maxRetryCount = _a.maxRetryCount, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, visibilityTimeout = _a.visibilityTimeout, mainQueueOverride = _a.mainQueueOverride, omitPhysicalId = _a.omitPhysicalId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
         var candidateQueueName = "".concat(prefix).concat(name, "Queue").concat(fifo ? ".fifo" : "");
         addResource(template, "".concat(name, "Queue"), {
@@ -348,7 +346,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, prefix, topicArn}} config including name of the queue, the
      *  resource prefix and the arn of the topic
      */
-    ServerlessSnsSqsLambda.prototype.addEventQueuePolicy = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addEventQueuePolicy = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, topicArn = _a.topicArn;
         addResource(template, "".concat(name, "QueuePolicy"), {
             Type: "AWS::SQS::QueuePolicy",
@@ -378,7 +376,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {{name, topicArn, filterPolicy}} config including name of the queue,
      *  the arn of the topic and the filter policy for the subscription
      */
-    ServerlessSnsSqsLambda.prototype.addTopicSubscription = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addTopicSubscription = function (template, func, _a) {
         var name = _a.name, topicArn = _a.topicArn, filterPolicy = _a.filterPolicy, rawMessageDelivery = _a.rawMessageDelivery, subscriptionOverride = _a.subscriptionOverride;
         addResource(template, "Subscribe".concat(name, "Topic"), {
             Type: "AWS::SNS::Subscription",
@@ -395,7 +393,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      * @param {object} template the template which gets mutated
      * @param {{name, prefix}} config the name of the queue the lambda is subscribed to
      */
-    ServerlessSnsSqsLambda.prototype.addLambdaSqsPermissions = function (template, _a) {
+    ServerlessSnsSqsLambda.prototype.addLambdaSqsPermissions = function (template, func, _a) {
         var name = _a.name, kmsMasterKeyId = _a.kmsMasterKeyId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
         if (template.Resources.IamRoleLambdaExecution === undefined) {
             // The user has set their own custom role ARN so the Serverless generated role is not generated
