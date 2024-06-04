@@ -11,6 +11,8 @@ node_modules
 *.code-workspace
 .history
 
+# tsc output
+dist
 
 #misc
 yarn-error.log
