@@ -262,6 +262,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
         var enabledWithDefault = enabled !== undefined ? enabled : true;
         addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name, "Queue"), {
             Type: "AWS::Lambda::EventSourceMapping",
+            DependsOn: cfFuncName,
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
                     : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: { "Fn::GetAtt": ["".concat(cfFuncName), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
