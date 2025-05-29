@@ -346,7 +346,8 @@ Usage
 `);
     }
 
-    const funcNamePascalCase = this.serverless.providers.aws.naming.getNormalizedFunctionName(funcName);
+    const funcNamePascalCase =
+      this.serverless.providers.aws.naming.getNormalizedFunctionName(funcName);
     return {
       ...config,
       name: config.name,
@@ -398,7 +399,7 @@ Usage
     }: Config
   ) {
     const enabledWithDefault = enabled !== undefined ? enabled : true;
-    addResource(template, `${funcName}EventSourceMappingSQS${name}Queue`, {
+    addResource(template, `${funcName}EventSourceMappingSQS${name}`, {
       Type: "AWS::Lambda::EventSourceMapping",
       Properties: {
         BatchSize: batchSize,
@@ -406,8 +407,10 @@ Usage
           maximumBatchingWindowInSeconds !== undefined
             ? maximumBatchingWindowInSeconds
             : 0,
-        EventSourceArn: { "Fn::GetAtt": [`${name}Queue`, "Arn"] },
-        FunctionName: func.provisionedConcurrency ? { Ref: `${funcName}ProvConcLambdaAlias` } : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] },
+        EventSourceArn: { "Fn::GetAtt": [`${name}`, "Arn"] },
+        FunctionName: func.provisionedConcurrency
+          ? { Ref: `${funcName}ProvConcLambdaAlias` }
+          : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] },
         Enabled: enabledWithDefault ? "True" : "False",
         ...pascalCaseAllKeys(eventSourceMappingOverride)
       }
@@ -440,10 +443,8 @@ Usage
     if (!deadLetterQueueEnabled) {
       return;
     }
-    const candidateQueueName = `${prefix}${name}DeadLetterQueue${
-      fifo ? ".fifo" : ""
-    }`;
-    addResource(template, `${name}DeadLetterQueue`, {
+    const candidateQueueName = `${prefix}${name}-dlq${fifo ? ".fifo" : ""}`;
+    addResource(template, `${name}-dlq`, {
       Type: "AWS::SQS::Queue",
       Properties: {
         ...(omitPhysicalId
@@ -494,8 +495,8 @@ Usage
       deadLetterQueueEnabled
     }: Config
   ) {
-    const candidateQueueName = `${prefix}${name}Queue${fifo ? ".fifo" : ""}`;
-    addResource(template, `${name}Queue`, {
+    const candidateQueueName = `${prefix}${name}${fifo ? ".fifo" : ""}`;
+    addResource(template, `${name}`, {
       Type: "AWS::SQS::Queue",
       Properties: {
         ...(omitPhysicalId
@@ -506,7 +507,7 @@ Usage
           ? {
               RedrivePolicy: {
                 deadLetterTargetArn: {
-                  "Fn::GetAtt": [`${name}DeadLetterQueue`, "Arn"]
+                  "Fn::GetAtt": [`${name}-dlq`, "Arn"]
                 },
                 maxReceiveCount: maxRetryCount
               }
@@ -545,19 +546,19 @@ Usage
       Properties: {
         PolicyDocument: {
           Version: "2012-10-17",
-          Id: `${prefix}${name}Queue`,
+          Id: `${prefix}${name}`,
           Statement: [
             {
               Sid: `${prefix}${name}Sid`,
               Effect: "Allow",
               Principal: { Service: "sns.amazonaws.com" },
               Action: "SQS:SendMessage",
-              Resource: { "Fn::GetAtt": [`${name}Queue`, "Arn"] },
+              Resource: { "Fn::GetAtt": [`${name}`, "Arn"] },
               Condition: { ArnEquals: { "aws:SourceArn": [topicArn] } }
             }
           ]
         },
-        Queues: [{ Ref: `${name}Queue` }]
+        Queues: [{ Ref: `${name}` }]
       }
     });
   }
@@ -583,7 +584,7 @@ Usage
     addResource(template, `Subscribe${name}Topic`, {
       Type: "AWS::SNS::Subscription",
       Properties: {
-        Endpoint: { "Fn::GetAtt": [`${name}Queue`, "Arn"] },
+        Endpoint: { "Fn::GetAtt": [`${name}`, "Arn"] },
         Protocol: "sqs",
         TopicArn: topicArn,
         ...(filterPolicy ? { FilterPolicy: filterPolicy } : {}),
@@ -614,9 +615,9 @@ Usage
       // this the relevant policy to allow the lambda to access the queue.
       return;
     }
-    const queues = [{ "Fn::GetAtt": [`${name}Queue`, "Arn"] }];
+    const queues = [{ "Fn::GetAtt": [`${name}`, "Arn"] }];
     if (deadLetterQueueEnabled) {
-      queues.push({ "Fn::GetAtt": [`${name}DeadLetterQueue`, "Arn"] });
+      queues.push({ "Fn::GetAtt": [`${name}-dlq`, "Arn"] });
     }
     template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push(
       {

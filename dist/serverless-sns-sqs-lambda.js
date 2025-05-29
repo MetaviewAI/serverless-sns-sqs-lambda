@@ -253,11 +253,13 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
     ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
         var enabledWithDefault = enabled !== undefined ? enabled : true;
-        addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name, "Queue"), {
+        addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name), {
             Type: "AWS::Lambda::EventSourceMapping",
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, FunctionName: func.provisionedConcurrency ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") } : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name), "Arn"] }, FunctionName: func.provisionedConcurrency
+                    ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") }
+                    : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
     };
     /**
@@ -273,8 +275,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
         if (!deadLetterQueueEnabled) {
             return;
         }
-        var candidateQueueName = "".concat(prefix).concat(name, "DeadLetterQueue").concat(fifo ? ".fifo" : "");
-        addResource(template, "".concat(name, "DeadLetterQueue"), {
+        var candidateQueueName = "".concat(prefix).concat(name, "-dlq").concat(fifo ? ".fifo" : "");
+        addResource(template, "".concat(name, "-dlq"), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -303,8 +305,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      */
     ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, maxRetryCount = _a.maxRetryCount, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, visibilityTimeout = _a.visibilityTimeout, mainQueueOverride = _a.mainQueueOverride, omitPhysicalId = _a.omitPhysicalId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
-        var candidateQueueName = "".concat(prefix).concat(name, "Queue").concat(fifo ? ".fifo" : "");
-        addResource(template, "".concat(name, "Queue"), {
+        var candidateQueueName = "".concat(prefix).concat(name).concat(fifo ? ".fifo" : "");
+        addResource(template, "".concat(name), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -312,7 +314,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                 ? {
                     RedrivePolicy: {
                         deadLetterTargetArn: {
-                            "Fn::GetAtt": ["".concat(name, "DeadLetterQueue"), "Arn"]
+                            "Fn::GetAtt": ["".concat(name, "-dlq"), "Arn"]
                         },
                         maxReceiveCount: maxRetryCount
                     }
@@ -346,19 +348,19 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             Properties: {
                 PolicyDocument: {
                     Version: "2012-10-17",
-                    Id: "".concat(prefix).concat(name, "Queue"),
+                    Id: "".concat(prefix).concat(name),
                     Statement: [
                         {
                             Sid: "".concat(prefix).concat(name, "Sid"),
                             Effect: "Allow",
                             Principal: { Service: "sns.amazonaws.com" },
                             Action: "SQS:SendMessage",
-                            Resource: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] },
+                            Resource: { "Fn::GetAtt": ["".concat(name), "Arn"] },
                             Condition: { ArnEquals: { "aws:SourceArn": [topicArn] } }
                         }
                     ]
                 },
-                Queues: [{ Ref: "".concat(name, "Queue") }]
+                Queues: [{ Ref: "".concat(name) }]
             }
         });
     };
@@ -373,7 +375,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
         var name = _a.name, topicArn = _a.topicArn, filterPolicy = _a.filterPolicy, rawMessageDelivery = _a.rawMessageDelivery, subscriptionOverride = _a.subscriptionOverride;
         addResource(template, "Subscribe".concat(name, "Topic"), {
             Type: "AWS::SNS::Subscription",
-            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
+            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": ["".concat(name), "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
                 ? {
                     RawMessageDelivery: rawMessageDelivery
                 }
@@ -394,9 +396,9 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             // this the relevant policy to allow the lambda to access the queue.
             return;
         }
-        var queues = [{ "Fn::GetAtt": ["".concat(name, "Queue"), "Arn"] }];
+        var queues = [{ "Fn::GetAtt": ["".concat(name), "Arn"] }];
         if (deadLetterQueueEnabled) {
-            queues.push({ "Fn::GetAtt": ["".concat(name, "DeadLetterQueue"), "Arn"] });
+            queues.push({ "Fn::GetAtt": ["".concat(name, "-dlq"), "Arn"] });
         }
         template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push({
             Effect: "Allow",
