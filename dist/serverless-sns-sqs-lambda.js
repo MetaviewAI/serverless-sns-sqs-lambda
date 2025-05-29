@@ -44,6 +44,18 @@ var parseIntOr = function (intString, defaultInt) {
 var pascalCase = function (camelCase) {
     return camelCase.slice(0, 1).toUpperCase() + camelCase.slice(1);
 };
+/**
+ * Sanitizes a name for use in CloudFormation logical IDs by removing hyphens
+ * and converting to PascalCase.
+ *
+ * @param {string} name the name to sanitize
+ */
+var sanitizeLogicalId = function (name) {
+    return name
+        .split("-")
+        .map(function (part) { return pascalCase(part); })
+        .join("");
+};
 var pascalCaseAllKeys = function (jsonObject) {
     return Object.keys(jsonObject).reduce(function (acc, key) {
         var _a;
@@ -253,11 +265,12 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
     ServerlessSnsSqsLambda.prototype.addEventSourceMapping = function (template, func, _a) {
         var funcName = _a.funcName, name = _a.name, batchSize = _a.batchSize, maximumBatchingWindowInSeconds = _a.maximumBatchingWindowInSeconds, enabled = _a.enabled, eventSourceMappingOverride = _a.eventSourceMappingOverride;
         var enabledWithDefault = enabled !== undefined ? enabled : true;
-        addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(name), {
+        var sanitizedName = sanitizeLogicalId(name);
+        addResource(template, "".concat(funcName, "EventSourceMappingSQS").concat(sanitizedName), {
             Type: "AWS::Lambda::EventSourceMapping",
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(name), "Arn"] }, FunctionName: func.provisionedConcurrency
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] }, FunctionName: func.provisionedConcurrency
                     ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") }
                     : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
@@ -276,7 +289,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             return;
         }
         var candidateQueueName = "".concat(prefix).concat(name, "-dlq").concat(fifo ? ".fifo" : "");
-        addResource(template, "".concat(name, "-dlq"), {
+        var sanitizedName = sanitizeLogicalId(name);
+        addResource(template, "".concat(sanitizedName, "Dlq"), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -306,7 +320,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
     ServerlessSnsSqsLambda.prototype.addEventQueue = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, fifo = _a.fifo, maxRetryCount = _a.maxRetryCount, kmsMasterKeyId = _a.kmsMasterKeyId, kmsDataKeyReusePeriodSeconds = _a.kmsDataKeyReusePeriodSeconds, visibilityTimeout = _a.visibilityTimeout, mainQueueOverride = _a.mainQueueOverride, omitPhysicalId = _a.omitPhysicalId, deadLetterQueueEnabled = _a.deadLetterQueueEnabled;
         var candidateQueueName = "".concat(prefix).concat(name).concat(fifo ? ".fifo" : "");
-        addResource(template, "".concat(name), {
+        var sanitizedName = sanitizeLogicalId(name);
+        addResource(template, "".concat(sanitizedName), {
             Type: "AWS::SQS::Queue",
             Properties: __assign(__assign(__assign(__assign(__assign(__assign(__assign({}, (omitPhysicalId
                 ? {}
@@ -314,7 +329,7 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                 ? {
                     RedrivePolicy: {
                         deadLetterTargetArn: {
-                            "Fn::GetAtt": ["".concat(name, "-dlq"), "Arn"]
+                            "Fn::GetAtt": ["".concat(sanitizedName, "Dlq"), "Arn"]
                         },
                         maxReceiveCount: maxRetryCount
                     }
@@ -343,7 +358,8 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      */
     ServerlessSnsSqsLambda.prototype.addEventQueuePolicy = function (template, func, _a) {
         var name = _a.name, prefix = _a.prefix, topicArn = _a.topicArn;
-        addResource(template, "".concat(name, "QueuePolicy"), {
+        var sanitizedName = sanitizeLogicalId(name);
+        addResource(template, "".concat(sanitizedName, "QueuePolicy"), {
             Type: "AWS::SQS::QueuePolicy",
             Properties: {
                 PolicyDocument: {
@@ -355,12 +371,12 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
                             Effect: "Allow",
                             Principal: { Service: "sns.amazonaws.com" },
                             Action: "SQS:SendMessage",
-                            Resource: { "Fn::GetAtt": ["".concat(name), "Arn"] },
+                            Resource: { "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] },
                             Condition: { ArnEquals: { "aws:SourceArn": [topicArn] } }
                         }
                     ]
                 },
-                Queues: [{ Ref: "".concat(name) }]
+                Queues: [{ Ref: "".concat(sanitizedName) }]
             }
         });
     };
@@ -373,9 +389,10 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
      */
     ServerlessSnsSqsLambda.prototype.addTopicSubscription = function (template, func, _a) {
         var name = _a.name, topicArn = _a.topicArn, filterPolicy = _a.filterPolicy, rawMessageDelivery = _a.rawMessageDelivery, subscriptionOverride = _a.subscriptionOverride;
-        addResource(template, "Subscribe".concat(name, "Topic"), {
+        var sanitizedName = sanitizeLogicalId(name);
+        addResource(template, "Subscribe".concat(sanitizedName, "Topic"), {
             Type: "AWS::SNS::Subscription",
-            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": ["".concat(name), "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
+            Properties: __assign(__assign(__assign({ Endpoint: { "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] }, Protocol: "sqs", TopicArn: topicArn }, (filterPolicy ? { FilterPolicy: filterPolicy } : {})), (rawMessageDelivery !== undefined
                 ? {
                     RawMessageDelivery: rawMessageDelivery
                 }
@@ -396,9 +413,10 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             // this the relevant policy to allow the lambda to access the queue.
             return;
         }
-        var queues = [{ "Fn::GetAtt": ["".concat(name), "Arn"] }];
+        var sanitizedName = sanitizeLogicalId(name);
+        var queues = [{ "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] }];
         if (deadLetterQueueEnabled) {
-            queues.push({ "Fn::GetAtt": ["".concat(name, "-dlq"), "Arn"] });
+            queues.push({ "Fn::GetAtt": ["".concat(sanitizedName, "Dlq"), "Arn"] });
         }
         template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push({
             Effect: "Allow",

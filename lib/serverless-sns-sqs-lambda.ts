@@ -65,6 +65,18 @@ const parseIntOr = (intString, defaultInt) => {
 const pascalCase = (camelCase: string): string =>
   camelCase.slice(0, 1).toUpperCase() + camelCase.slice(1);
 
+/**
+ * Sanitizes a name for use in CloudFormation logical IDs by removing hyphens
+ * and converting to PascalCase.
+ *
+ * @param {string} name the name to sanitize
+ */
+const sanitizeLogicalId = (name: string): string =>
+  name
+    .split("-")
+    .map(part => pascalCase(part))
+    .join("");
+
 const pascalCaseAllKeys = (jsonObject: JsonObject): JsonObject =>
   Object.keys(jsonObject).reduce(
     (acc, key) => ({
@@ -399,7 +411,8 @@ Usage
     }: Config
   ) {
     const enabledWithDefault = enabled !== undefined ? enabled : true;
-    addResource(template, `${funcName}EventSourceMappingSQS${name}`, {
+    const sanitizedName = sanitizeLogicalId(name);
+    addResource(template, `${funcName}EventSourceMappingSQS${sanitizedName}`, {
       Type: "AWS::Lambda::EventSourceMapping",
       Properties: {
         BatchSize: batchSize,
@@ -407,7 +420,7 @@ Usage
           maximumBatchingWindowInSeconds !== undefined
             ? maximumBatchingWindowInSeconds
             : 0,
-        EventSourceArn: { "Fn::GetAtt": [`${name}`, "Arn"] },
+        EventSourceArn: { "Fn::GetAtt": [`${sanitizedName}`, "Arn"] },
         FunctionName: func.provisionedConcurrency
           ? { Ref: `${funcName}ProvConcLambdaAlias` }
           : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] },
@@ -444,7 +457,8 @@ Usage
       return;
     }
     const candidateQueueName = `${prefix}${name}-dlq${fifo ? ".fifo" : ""}`;
-    addResource(template, `${name}-dlq`, {
+    const sanitizedName = sanitizeLogicalId(name);
+    addResource(template, `${sanitizedName}Dlq`, {
       Type: "AWS::SQS::Queue",
       Properties: {
         ...(omitPhysicalId
@@ -496,7 +510,8 @@ Usage
     }: Config
   ) {
     const candidateQueueName = `${prefix}${name}${fifo ? ".fifo" : ""}`;
-    addResource(template, `${name}`, {
+    const sanitizedName = sanitizeLogicalId(name);
+    addResource(template, `${sanitizedName}`, {
       Type: "AWS::SQS::Queue",
       Properties: {
         ...(omitPhysicalId
@@ -507,7 +522,7 @@ Usage
           ? {
               RedrivePolicy: {
                 deadLetterTargetArn: {
-                  "Fn::GetAtt": [`${name}-dlq`, "Arn"]
+                  "Fn::GetAtt": [`${sanitizedName}Dlq`, "Arn"]
                 },
                 maxReceiveCount: maxRetryCount
               }
@@ -541,7 +556,8 @@ Usage
    *  resource prefix and the arn of the topic
    */
   addEventQueuePolicy(template, func, { name, prefix, topicArn }: Config) {
-    addResource(template, `${name}QueuePolicy`, {
+    const sanitizedName = sanitizeLogicalId(name);
+    addResource(template, `${sanitizedName}QueuePolicy`, {
       Type: "AWS::SQS::QueuePolicy",
       Properties: {
         PolicyDocument: {
@@ -553,12 +569,12 @@ Usage
               Effect: "Allow",
               Principal: { Service: "sns.amazonaws.com" },
               Action: "SQS:SendMessage",
-              Resource: { "Fn::GetAtt": [`${name}`, "Arn"] },
+              Resource: { "Fn::GetAtt": [`${sanitizedName}`, "Arn"] },
               Condition: { ArnEquals: { "aws:SourceArn": [topicArn] } }
             }
           ]
         },
-        Queues: [{ Ref: `${name}` }]
+        Queues: [{ Ref: `${sanitizedName}` }]
       }
     });
   }
@@ -581,10 +597,11 @@ Usage
       subscriptionOverride
     }: Config
   ) {
-    addResource(template, `Subscribe${name}Topic`, {
+    const sanitizedName = sanitizeLogicalId(name);
+    addResource(template, `Subscribe${sanitizedName}Topic`, {
       Type: "AWS::SNS::Subscription",
       Properties: {
-        Endpoint: { "Fn::GetAtt": [`${name}`, "Arn"] },
+        Endpoint: { "Fn::GetAtt": [`${sanitizedName}`, "Arn"] },
         Protocol: "sqs",
         TopicArn: topicArn,
         ...(filterPolicy ? { FilterPolicy: filterPolicy } : {}),
@@ -615,9 +632,10 @@ Usage
       // this the relevant policy to allow the lambda to access the queue.
       return;
     }
-    const queues = [{ "Fn::GetAtt": [`${name}`, "Arn"] }];
+    const sanitizedName = sanitizeLogicalId(name);
+    const queues = [{ "Fn::GetAtt": [`${sanitizedName}`, "Arn"] }];
     if (deadLetterQueueEnabled) {
-      queues.push({ "Fn::GetAtt": [`${name}-dlq`, "Arn"] });
+      queues.push({ "Fn::GetAtt": [`${sanitizedName}Dlq`, "Arn"] });
     }
     template.Resources.IamRoleLambdaExecution.Properties.Policies[0].PolicyDocument.Statement.push(
       {
