@@ -25,30 +25,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -79,11 +56,34 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-TestDashfunctionsome-name.fifo",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-TestDashfunctionsome-name-dlq.fifo",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -93,48 +93,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-Test-functionsome-nameDeadLetterQueue.fifo",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-Test-functionsome-nameQueue.fifo",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }
@@ -165,30 +142,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -219,11 +173,32 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-TestDashfunctionsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-TestDashfunctionsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -233,46 +208,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-Test-functionsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-Test-functionsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }
@@ -371,11 +325,69 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "test-service-dev-test-TestDashfunctionsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "test-service-dev-test-TestDashfunctionsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -385,19 +397,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -440,64 +452,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-Test-functionsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-Test-functionsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "test-service-dev-test-Test-functionsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "test-service-dev-test-Test-functionsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -573,35 +527,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Action": Array [
-                    "kms:Decrypt",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": "arn:aws:kms:::key/some key",
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -702,11 +627,75 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "KmsDataKeyReusePeriodSeconds": 200,
+        "KmsMasterKeyId": "some key",
+        "QueueName": "some prefixsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 4,
+        },
+        "VisibilityTimeout": 999,
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "KmsDataKeyReusePeriodSeconds": 200,
+        "KmsMasterKeyId": "some key",
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "some prefixsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "some prefixsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "some prefixsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -722,19 +711,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 7,
         "Enabled": "False",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -782,70 +771,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "KmsDataKeyReusePeriodSeconds": 200,
-        "KmsMasterKeyId": "some key",
-        "MessageRetentionPeriod": 1209600,
-        "QueueName": "some prefixsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "KmsDataKeyReusePeriodSeconds": 200,
-        "KmsMasterKeyId": "some key",
-        "QueueName": "some prefixsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 4,
-        },
-        "VisibilityTimeout": 999,
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "some prefixsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "some prefixsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -921,22 +846,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -1037,11 +946,54 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "test-service-dev-test-TestDashfunctionsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "test-service-dev-test-TestDashfunctionsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -1051,19 +1003,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -1111,49 +1063,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-Test-functionsome-nameQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "test-service-dev-test-Test-functionsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "test-service-dev-test-Test-functionsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -1229,28 +1138,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -1351,11 +1238,69 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "some prefixsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 4,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "some prefixsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "some prefixsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "some prefixsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -1365,19 +1310,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -1425,64 +1370,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "some prefixsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "some prefixsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 4,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "some prefixsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "some prefixsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -1558,28 +1445,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -1680,11 +1545,71 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name.fifo",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name-dlq.fifo",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "test-service-dev-test-TestDashfunctionsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "test-service-dev-test-TestDashfunctionsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -1694,19 +1619,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -1754,66 +1679,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-Test-functionsome-nameDeadLetterQueue.fifo",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-Test-functionsome-nameQueue.fifo",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "test-service-dev-test-Test-functionsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "test-service-dev-test-Test-functionsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -1889,28 +1754,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -2011,11 +1854,69 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-TestDashfunctionsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "test-service-dev-test-TestDashfunctionsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "test-service-dev-test-TestDashfunctionsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2025,19 +1926,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -2085,64 +1986,6 @@ Object {
         "LogGroupName": "/aws/lambda/test-service-dev-test-test-function",
       },
       "Type": "AWS::Logs::LogGroup",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-Test-functionsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-Test-functionsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "test-service-dev-test-Test-functionsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "test-service-dev-test-Test-functionsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
     },
   },
 }
@@ -2218,28 +2061,6 @@ Object {
                     },
                   ],
                 },
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
               ],
               "Version": "2012-10-17",
             },
@@ -2340,11 +2161,71 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "some prefixsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 4,
+        },
+        "VisibilityTimeout": 4321,
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "MessageRetentionPeriod": 1000,
+        "QueueName": "some prefixsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameQueuePolicy": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Id": "some prefixsome-name",
+          "Statement": Array [
+            Object {
+              "Action": "SQS:SendMessage",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Array [
+                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "sns.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SomeName",
+                  "Arn",
+                ],
+              },
+              "Sid": "some prefixsome-nameSid",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "SomeName",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2354,19 +2235,19 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": false,
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
@@ -2415,66 +2296,6 @@ Object {
       },
       "Type": "AWS::Logs::LogGroup",
     },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "MessageRetentionPeriod": 1000,
-        "QueueName": "some prefixsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "some prefixsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 4,
-        },
-        "VisibilityTimeout": 4321,
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueuePolicy": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Id": "some prefixsome-nameQueue",
-          "Statement": Array [
-            Object {
-              "Action": "SQS:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Array [
-                    "arn:aws:sns:us-east-2:123456789012:MyTopic",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "some-nameQueue",
-                  "Arn",
-                ],
-              },
-              "Sid": "some prefixsome-nameSid",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "some-nameQueue",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
   },
 }
 `;
@@ -2504,30 +2325,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -2558,11 +2356,34 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-config-TestDashfunctionsome-name.fifo",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-config-TestDashfunctionsome-name-dlq.fifo",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2572,48 +2393,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-config-Test-functionsome-nameDeadLetterQueue.fifo",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-config-Test-functionsome-nameQueue.fifo",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }
@@ -2644,30 +2442,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -2698,11 +2473,32 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-config-TestDashfunctionsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-config-TestDashfunctionsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2712,46 +2508,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-config-Test-functionsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-config-Test-functionsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }
@@ -2782,30 +2557,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -2836,11 +2588,34 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-provider-TestDashfunctionsome-name.fifo",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": "test-service-dev-test-provider-TestDashfunctionsome-name-dlq.fifo",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2850,48 +2625,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-provider-Test-functionsome-nameDeadLetterQueue.fifo",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "FifoQueue": true,
-        "QueueName": "test-service-dev-test-provider-Test-functionsome-nameQueue.fifo",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }
@@ -2922,30 +2674,7 @@ Object {
         "Policies": Array [
           Object {
             "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
-                    "sqs:ReceiveMessage",
-                    "sqs:DeleteMessage",
-                    "sqs:GetQueueAttributes",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameQueue",
-                        "Arn",
-                      ],
-                    },
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "some-nameDeadLetterQueue",
-                        "Arn",
-                      ],
-                    },
-                  ],
-                },
-              ],
+              "Statement": Array [],
               "Version": "2012-10-17",
             },
             "PolicyName": Object {
@@ -2976,11 +2705,32 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Subscribesome-nameTopic": Object {
+    "SomeName": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-provider-TestDashfunctionsome-name",
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "SomeNameDlq",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SomeNameDlq": Object {
+      "Properties": Object {
+        "QueueName": "test-service-dev-test-provider-TestDashfunctionsome-name-dlq",
+      },
+      "Type": "AWS::SQS::Queue",
+    },
+    "SubscribeSomeNameTopic": Object {
       "Properties": Object {
         "Endpoint": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
@@ -2990,46 +2740,25 @@ Object {
       },
       "Type": "AWS::SNS::Subscription",
     },
-    "Test-functionEventSourceMappingSQSsome-nameQueue": Object {
+    "TestDashfunctionEventSourceMappingSQSSomeName": Object {
       "Properties": Object {
         "BatchSize": 10,
         "Enabled": "True",
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "some-nameQueue",
+            "SomeName",
             "Arn",
           ],
         },
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "Test-functionLambdaFunction",
+            "TestDashfunctionLambdaFunction",
             "Arn",
           ],
         },
         "MaximumBatchingWindowInSeconds": 0,
       },
       "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "some-nameDeadLetterQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-provider-Test-functionsome-nameDeadLetterQueue",
-      },
-      "Type": "AWS::SQS::Queue",
-    },
-    "some-nameQueue": Object {
-      "Properties": Object {
-        "QueueName": "test-service-dev-test-provider-Test-functionsome-nameQueue",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "some-nameDeadLetterQueue",
-              "Arn",
-            ],
-          },
-          "maxReceiveCount": 5,
-        },
-      },
-      "Type": "AWS::SQS::Queue",
     },
   },
 }

@@ -20,8 +20,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -547,11 +547,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -566,11 +566,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     fifo: true
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -596,11 +596,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -615,11 +615,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     fifo: true
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -644,11 +644,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -663,11 +663,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     fifo: true
                 };
                 var validatedConfig = serverlessSnsSqsLambda.validateConfig("test-function", serverlessSnsSqsLambda.stage, testConfig);
-                serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, validatedConfig);
-                serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-                serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
-                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, validatedConfig);
+                serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventDeadLetterQueue(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addEventSourceMapping(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addTopicSubscription(template, {}, validatedConfig);
+                serverlessSnsSqsLambda.addLambdaSqsPermissions(template, {}, validatedConfig);
                 expect(template).toMatchSnapshot();
             });
         });
@@ -701,10 +701,10 @@ describe("Test Serverless SNS SQS Lambda", function () {
                     }
                 };
                 var thunk = function () {
-                    serverlessSnsSqsLambda.addSnsSqsResources(template, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
-                    serverlessSnsSqsLambda.addSnsSqsResources(template, "Fn2", "unit-test", testCase.functions.Fn2.events[0].snsSqs);
+                    serverlessSnsSqsLambda.addSnsSqsResources(template, {}, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
+                    serverlessSnsSqsLambda.addSnsSqsResources(template, {}, "Fn2", "unit-test", testCase.functions.Fn2.events[0].snsSqs);
                 };
-                expect(thunk).toThrowErrorMatchingInlineSnapshot("\"Generated logical ID [Event1DeadLetterQueue] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property.\"");
+                expect(thunk).toThrowErrorMatchingInlineSnapshot("\"Generated logical ID [Event1Dlq] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property.\"");
             });
         });
         describe("when the generated queue names are too long (over 80 characters)", function () {
@@ -719,7 +719,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                                 events: [
                                     {
                                         snsSqs: {
-                                            prefix: "something-really-long-that-puts-it-",
+                                            prefix: "something-really-really-long-that-puts-it-",
                                             name: "over-80-characters-which-is-no-good",
                                             topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
                                         }
@@ -729,9 +729,9 @@ describe("Test Serverless SNS SQS Lambda", function () {
                         }
                     };
                     var thunk = function () {
-                        serverlessSnsSqsLambda.addSnsSqsResources(template, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
+                        serverlessSnsSqsLambda.addSnsSqsResources(template, {}, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
                     };
-                    expect(thunk).toThrowErrorMatchingInlineSnapshot("\"Generated queue name [something-really-long-that-puts-it-over-80-characters-which-is-no-goodDeadLetterQueue] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option.\"");
+                    expect(thunk).toThrowErrorMatchingInlineSnapshot("\"Generated queue name [something-really-really-long-that-puts-it-over-80-characters-which-is-no-good-dlq] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option.\"");
                 });
             });
         });
@@ -746,7 +746,7 @@ describe("Test Serverless SNS SQS Lambda", function () {
                             events: [
                                 {
                                     snsSqs: {
-                                        prefix: "something-really-long-that-puts-it-",
+                                        prefix: "something-really-really-long-that-puts-it-",
                                         name: "over-80-characters-which-is-no-good",
                                         topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic",
                                         omitPhysicalId: true
@@ -756,10 +756,11 @@ describe("Test Serverless SNS SQS Lambda", function () {
                         }
                     }
                 };
-                serverlessSnsSqsLambda.addSnsSqsResources(template, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
-                var regularQueueName = template.Resources["over-80-characters-which-is-no-goodQueue"]
-                    .Properties.QueueName;
-                var deadLetterQueueName = template.Resources["over-80-characters-which-is-no-goodDeadLetterQueue"].Properties.QueueName;
+                serverlessSnsSqsLambda.addSnsSqsResources(template, {}, "Fn1", "unit-test", testCase.functions.Fn1.events[0].snsSqs);
+                var regularQueueName = template.Resources["Over80CharactersWhichIsNoGood"].Properties
+                    .QueueName;
+                var deadLetterQueueName = template.Resources["Over80CharactersWhichIsNoGoodDlq"].Properties
+                    .QueueName;
                 // AWS will do this for us
                 expect(regularQueueName).toBeUndefined();
                 expect(deadLetterQueueName).toBeUndefined();

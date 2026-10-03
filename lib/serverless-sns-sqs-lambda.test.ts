@@ -500,15 +500,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -533,15 +543,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -583,15 +603,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -616,15 +646,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -663,15 +703,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -696,15 +746,25 @@ describe("Test Serverless SNS SQS Lambda", () => {
           serverlessSnsSqsLambda.stage,
           testConfig
         );
-        serverlessSnsSqsLambda.addEventQueue(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventQueue(template, {}, validatedConfig);
         serverlessSnsSqsLambda.addEventDeadLetterQueue(
           template,
+          {},
           validatedConfig
         );
-        serverlessSnsSqsLambda.addEventSourceMapping(template, validatedConfig);
-        serverlessSnsSqsLambda.addTopicSubscription(template, validatedConfig);
+        serverlessSnsSqsLambda.addEventSourceMapping(
+          template,
+          {},
+          validatedConfig
+        );
+        serverlessSnsSqsLambda.addTopicSubscription(
+          template,
+          {},
+          validatedConfig
+        );
         serverlessSnsSqsLambda.addLambdaSqsPermissions(
           template,
+          {},
           validatedConfig
         );
 
@@ -747,12 +807,14 @@ describe("Test Serverless SNS SQS Lambda", () => {
         const thunk = () => {
           serverlessSnsSqsLambda.addSnsSqsResources(
             template,
+            {},
             "Fn1",
             "unit-test",
             testCase.functions.Fn1.events[0].snsSqs
           );
           serverlessSnsSqsLambda.addSnsSqsResources(
             template,
+            {},
             "Fn2",
             "unit-test",
             testCase.functions.Fn2.events[0].snsSqs
@@ -760,7 +822,7 @@ describe("Test Serverless SNS SQS Lambda", () => {
         };
 
         expect(thunk).toThrowErrorMatchingInlineSnapshot(
-          `"Generated logical ID [Event1DeadLetterQueue] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property."`
+          `"Generated logical ID [Event1Dlq] already exists in resources definition. Ensure that the snsSqs event definition has a unique name property."`
         );
       });
     });
@@ -779,7 +841,7 @@ describe("Test Serverless SNS SQS Lambda", () => {
                 events: [
                   {
                     snsSqs: {
-                      prefix: "something-really-long-that-puts-it-",
+                      prefix: "something-really-really-long-that-puts-it-",
                       name: "over-80-characters-which-is-no-good",
                       topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
                     }
@@ -792,6 +854,7 @@ describe("Test Serverless SNS SQS Lambda", () => {
           const thunk = () => {
             serverlessSnsSqsLambda.addSnsSqsResources(
               template,
+              {},
               "Fn1",
               "unit-test",
               testCase.functions.Fn1.events[0].snsSqs
@@ -799,7 +862,7 @@ describe("Test Serverless SNS SQS Lambda", () => {
           };
 
           expect(thunk).toThrowErrorMatchingInlineSnapshot(
-            `"Generated queue name [something-really-long-that-puts-it-over-80-characters-which-is-no-goodDeadLetterQueue] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option."`
+            `"Generated queue name [something-really-really-long-that-puts-it-over-80-characters-which-is-no-good-dlq] is longer than 80 characters long and may be truncated by AWS, causing naming collisions. Try a shorter prefix or name, or try the hashQueueName config option."`
           );
         });
       });
@@ -817,7 +880,7 @@ describe("Test Serverless SNS SQS Lambda", () => {
               events: [
                 {
                   snsSqs: {
-                    prefix: "something-really-long-that-puts-it-",
+                    prefix: "something-really-really-long-that-puts-it-",
                     name: "over-80-characters-which-is-no-good",
                     topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic",
                     omitPhysicalId: true
@@ -830,18 +893,18 @@ describe("Test Serverless SNS SQS Lambda", () => {
 
         serverlessSnsSqsLambda.addSnsSqsResources(
           template,
+          {},
           "Fn1",
           "unit-test",
           testCase.functions.Fn1.events[0].snsSqs
         );
 
         const regularQueueName =
-          template.Resources["over-80-characters-which-is-no-goodQueue"]
-            .Properties.QueueName;
+          template.Resources["Over80CharactersWhichIsNoGood"].Properties
+            .QueueName;
         const deadLetterQueueName =
-          template.Resources[
-            "over-80-characters-which-is-no-goodDeadLetterQueue"
-          ].Properties.QueueName;
+          template.Resources["Over80CharactersWhichIsNoGoodDlq"].Properties
+            .QueueName;
 
         // AWS will do this for us
         expect(regularQueueName).toBeUndefined();
