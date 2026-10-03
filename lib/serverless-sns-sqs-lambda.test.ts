@@ -464,6 +464,75 @@ describe("Test Serverless SNS SQS Lambda", () => {
         });
       });
     });
+
+    describe("when choosing the event source mapping target", () => {
+      const packageFunction = async functionConfig => {
+        const { cfTemplate } = await runServerless(serverlessPath, {
+          command: "package",
+          config: {
+            ...baseConfig,
+            functions: {
+              ["test-function"]: {
+                handler: "handler.handler",
+                ...functionConfig,
+                events: [
+                  {
+                    snsSqs: {
+                      name: "some-name",
+                      topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        });
+        return cfTemplate;
+      };
+
+      const mappingFunctionName = cfTemplate =>
+        cfTemplate.Resources.TestDashfunctionEventSourceMappingSQSSomeName
+          .Properties.FunctionName;
+
+      it("should target the provisioned concurrency alias", async () => {
+        const cfTemplate = await packageFunction({ provisionedConcurrency: 1 });
+
+        expect(mappingFunctionName(cfTemplate)).toEqual({
+          Ref: "TestDashfunctionProvConcLambdaAlias"
+        });
+        expect(
+          cfTemplate.Resources.TestDashfunctionProvConcLambdaAlias
+        ).toMatchObject({
+          Type: "AWS::Lambda::Alias",
+          Properties: { Name: "provisioned" }
+        });
+      });
+
+      it("should target the SnapStart alias", async () => {
+        const cfTemplate = await packageFunction({
+          runtime: "java11",
+          snapStart: true
+        });
+
+        expect(mappingFunctionName(cfTemplate)).toEqual({
+          Ref: "TestDashfunctionSnapStartLambdaAlias"
+        });
+        expect(
+          cfTemplate.Resources.TestDashfunctionSnapStartLambdaAlias
+        ).toMatchObject({
+          Type: "AWS::Lambda::Alias",
+          Properties: { Name: "snapstart" }
+        });
+      });
+
+      it("should target the unqualified function when there is no alias", async () => {
+        const cfTemplate = await packageFunction({});
+
+        expect(mappingFunctionName(cfTemplate)).toEqual({
+          "Fn::GetAtt": ["TestDashfunctionLambdaFunction", "Arn"]
+        });
+      });
+    });
   });
 
   describe("when the provider is specified via a config option in serverless.yml", () => {

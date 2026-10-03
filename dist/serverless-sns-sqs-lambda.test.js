@@ -524,6 +524,89 @@ describe("Test Serverless SNS SQS Lambda", function () {
                 });
             }); });
         });
+        describe("when choosing the event source mapping target", function () {
+            var packageFunction = function (functionConfig) { return __awaiter(void 0, void 0, void 0, function () {
+                var cfTemplate;
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4 /*yield*/, (0, run_serverless_1.default)(serverlessPath, {
+                                command: "package",
+                                config: __assign(__assign({}, baseConfig), { functions: (_a = {},
+                                        _a["test-function"] = __assign(__assign({ handler: "handler.handler" }, functionConfig), { events: [
+                                                {
+                                                    snsSqs: {
+                                                        name: "some-name",
+                                                        topicArn: "arn:aws:sns:us-east-2:123456789012:MyTopic"
+                                                    }
+                                                }
+                                            ] }),
+                                        _a) })
+                            })];
+                        case 1:
+                            cfTemplate = (_b.sent()).cfTemplate;
+                            return [2 /*return*/, cfTemplate];
+                    }
+                });
+            }); };
+            var mappingFunctionName = function (cfTemplate) {
+                return cfTemplate.Resources.TestDashfunctionEventSourceMappingSQSSomeName
+                    .Properties.FunctionName;
+            };
+            it("should target the provisioned concurrency alias", function () { return __awaiter(void 0, void 0, void 0, function () {
+                var cfTemplate;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, packageFunction({ provisionedConcurrency: 1 })];
+                        case 1:
+                            cfTemplate = _a.sent();
+                            expect(mappingFunctionName(cfTemplate)).toEqual({
+                                Ref: "TestDashfunctionProvConcLambdaAlias"
+                            });
+                            expect(cfTemplate.Resources.TestDashfunctionProvConcLambdaAlias).toMatchObject({
+                                Type: "AWS::Lambda::Alias",
+                                Properties: { Name: "provisioned" }
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            it("should target the SnapStart alias", function () { return __awaiter(void 0, void 0, void 0, function () {
+                var cfTemplate;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, packageFunction({
+                                runtime: "java11",
+                                snapStart: true
+                            })];
+                        case 1:
+                            cfTemplate = _a.sent();
+                            expect(mappingFunctionName(cfTemplate)).toEqual({
+                                Ref: "TestDashfunctionSnapStartLambdaAlias"
+                            });
+                            expect(cfTemplate.Resources.TestDashfunctionSnapStartLambdaAlias).toMatchObject({
+                                Type: "AWS::Lambda::Alias",
+                                Properties: { Name: "snapstart" }
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            it("should target the unqualified function when there is no alias", function () { return __awaiter(void 0, void 0, void 0, function () {
+                var cfTemplate;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, packageFunction({})];
+                        case 1:
+                            cfTemplate = _a.sent();
+                            expect(mappingFunctionName(cfTemplate)).toEqual({
+                                "Fn::GetAtt": ["TestDashfunctionLambdaFunction", "Arn"]
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
     });
     describe("when the provider is specified via a config option in serverless.yml", function () {
         beforeEach(function () {

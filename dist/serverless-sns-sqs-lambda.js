@@ -270,8 +270,12 @@ var ServerlessSnsSqsLambda = /** @class */ (function () {
             Type: "AWS::Lambda::EventSourceMapping",
             Properties: __assign({ BatchSize: batchSize, MaximumBatchingWindowInSeconds: maximumBatchingWindowInSeconds !== undefined
                     ? maximumBatchingWindowInSeconds
-                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] }, FunctionName: func.provisionedConcurrency
-                    ? { Ref: "".concat(funcName, "ProvConcLambdaAlias") }
+                    : 0, EventSourceArn: { "Fn::GetAtt": ["".concat(sanitizedName), "Arn"] }, 
+                // Serverless sets `targetAlias` during package:compileFunctions for
+                // functions with provisioned concurrency, SnapStart or durable config.
+                // Invoking the unqualified function would bypass that alias.
+                FunctionName: func.targetAlias
+                    ? { Ref: func.targetAlias.logicalId }
                     : { "Fn::GetAtt": ["".concat(funcName, "LambdaFunction"), "Arn"] }, Enabled: enabledWithDefault ? "True" : "False" }, pascalCaseAllKeys(eventSourceMappingOverride))
         });
     };
