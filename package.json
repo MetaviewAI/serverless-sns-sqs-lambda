@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "yarn build && eslint lib/**/*.ts && jest --clearCache lib && jest --runInBand lib integration-tests",
-    "format": "prettier --ignore-path .gitignore --write . !**.md",
-    "format-check": "prettier --ignore-path .gitignore --check . !**.md",
+    "format": "prettier --ignore-path .gitignore --write . !**.md !dist",
+    "format-check": "prettier --ignore-path .gitignore --check . !**.md !dist",
     "build": "tsc",
     "commit": "git-cz",
     "check-branch-commits": "cz check --rev-range master..HEAD",
