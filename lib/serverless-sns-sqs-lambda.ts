@@ -421,8 +421,11 @@ Usage
             ? maximumBatchingWindowInSeconds
             : 0,
         EventSourceArn: { "Fn::GetAtt": [`${sanitizedName}`, "Arn"] },
-        FunctionName: func.provisionedConcurrency
-          ? { Ref: `${funcName}ProvConcLambdaAlias` }
+        // Serverless sets `targetAlias` during package:compileFunctions for
+        // functions with provisioned concurrency, SnapStart or durable config.
+        // Invoking the unqualified function would bypass that alias.
+        FunctionName: func.targetAlias
+          ? { Ref: func.targetAlias.logicalId }
           : { "Fn::GetAtt": [`${funcName}LambdaFunction`, "Arn"] },
         Enabled: enabledWithDefault ? "True" : "False",
         ...pascalCaseAllKeys(eventSourceMappingOverride)
